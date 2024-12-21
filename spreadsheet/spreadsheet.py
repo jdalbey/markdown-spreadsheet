@@ -10,7 +10,7 @@ grammar = """
 start: term
 
 term: "=" part*
-part: in_ | count_ | if_ | "(" part OPERATOR part ")" | DATE | NUMBER | range_substitution | cell | sum
+part: in_ | count_ | if_ | "(" part OPERATOR part ")" | DATE | NUMBER | STRING | range_substitution | cell | sum
 cell: /[A-Z][0-9]/
 count_: "COUNT" "(" RAW_CELL ":" RAW_CELL ")"
 if_: "IF" "(" part OPERATOR part ")" "THEN" cell "ELSE" cell
@@ -22,6 +22,7 @@ RAW_CELL: /[A-Z][0-9]/
 OPERATOR: "+" | "-" | "*" | "/" | ">" | "<"
 DATE: /\d{4}-\d{2}-\d{2}/
 NUMBER: /\d+/
+STRING: /[A-Z|a-z]/
 
 %import common.WS
 %ignore WS
@@ -97,6 +98,9 @@ class EvalExpressions(Transformer):
 
     def NUMBER(self, args):
         return float(args)
+
+    def STRING(self, args):
+        return str(args)
 
     def range_substitution(self, args):
         start = args[0]
