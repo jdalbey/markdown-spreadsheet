@@ -67,9 +67,4 @@ def stringify_dict(dictionary):
             dictionary[key] = str(value)
     return dictionary
 
-# Example usage:
-# file_path = 'table2.md'  # Replace with your file path
-# lines = read_file(file_path)
-# header_rows, result = parse_markdown_table(lines)
-# formatted_lines = convert_dict_to_markdown(header_rows, result)
-# print("\n".join(formatted_lines))
+
