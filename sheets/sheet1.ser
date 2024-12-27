@@ -1,0 +1,14 @@
+A1: 0.05
+A2: 100000
+B2: =DATE(2024,01,01)
+C1: prev bal
+C2: =A2
+D1: credits
+D2: 0
+E1: debits
+E2: 0
+F1: interest
+F2: =$C$2 * $A$1 / 365
+C3: =C2 - D2 + E2 + F2
+F3: =C3 * $A$1 / 365
+
