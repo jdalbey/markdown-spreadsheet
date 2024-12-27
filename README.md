@@ -14,4 +14,4 @@ View a plain-text spreadsheet in a graphical view.
 Under development.  All features above are implemented but with very little error-checking.
 
 ## Acknowledgments
-This project wouldn't be possible without Ironcalc, an open-source spreadsheet engine.
+This project wouldn't be possible without [Ironcalc](https://www.ironcalc.com/), an open-source spreadsheet engine.
