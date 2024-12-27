@@ -13,5 +13,8 @@ View a plain-text spreadsheet in a graphical view.
 ## Status
 Under development.  All features above are implemented but with very little error-checking.
 
+## Screenshot
+[![viewer-screenshot.png](https://i.postimg.cc/kXKbL9Bt/viewer-screenshot.png)](https://postimg.cc/D8f0b9Q2)
+
 ## Acknowledgments
 This project wouldn't be possible without [Ironcalc](https://www.ironcalc.com/), an open-source spreadsheet engine.
