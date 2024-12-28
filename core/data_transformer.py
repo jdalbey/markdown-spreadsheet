@@ -80,6 +80,24 @@ def identify_file_format(file_extension, source_lines):
     except Exception as e:
         return f"Error reading file: {e}"
 
+def spreadsheet_to_html(worksheet):
+    """ Convert a spreadsheet into an HTML table.
+     @param dictionary containing the spreadsheet
+     @return string containing HTML
+     """
+    row_max = worksheet['rows']
+    col_max = worksheet['columns']
+    spreadsheet = worksheet['sheet']
+
+    output = "<HTML><TABLE>\n"
+    for row in range(1, row_max + 1):
+        output += "<TR>\n"
+        for col in range(1, col_max + 1):
+            value = spreadsheet.get_formatted_cell_value(0, row, col)
+            output += f"<td>{value}</td>"
+        output += "</TR>\n"
+    output += "</TABLE></HTML>\n"
+    return output
 
 class DataTransformer:
     """ Parse methods for each different file type """
