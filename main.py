@@ -3,6 +3,7 @@ import sys
 import threading
 from app_gui import AppGUI
 from app_controller import AppController
+from get_args import get_args
 
 # This is the main module for the Spreadsheet Viewer application
 
@@ -25,19 +26,7 @@ def validate_arguments(args):
 
 # Parse the arguments and start the application in the desired mode: Interactive, Batch, or Watcher
 def main():
-    # Create an ArgumentParser object
-    parser = argparse.ArgumentParser(description="A versatile file processing application.")
-    
-    # Define arguments
-    parser.add_argument('-i', '--input_file', type=str, help="(Optional) The file to be opened by the application. If not specified, a new file is opened.")
-    parser.add_argument('-o', '--output-file', type=str, help="(Optional) The output file to be generated. Runs in batch mode when specified.")
-    parser.add_argument('-w', '--watcher', action='store_true', help="(Optional) Start in watcher mode to monitor the specified input file.")
-
-    # Parse arguments
-    args = parser.parse_args()
-
-    # Validate arguments
-    validate_arguments(args)
+    args = get_args()
 
     # Application logic based on arguments
     if args.output_file:
