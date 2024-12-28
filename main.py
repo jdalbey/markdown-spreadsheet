@@ -1,4 +1,3 @@
-import argparse
 import sys
 import threading
 from app_gui import AppGUI
@@ -6,23 +5,6 @@ from app_controller import AppController
 from get_args import get_args
 
 # This is the main module for the Spreadsheet Viewer application
-
-def validate_arguments(args):
-    # If output file (-o) is provided, ensure input file (-i) is also provided
-    if args.output_file and not args.input_file:
-        print("Error: -o/--output-file requires -i/--input-file.", file=sys.stderr)
-        sys.exit(1)
-    
-    # Validate output file extension if provided
-    if args.output_file:
-        if not args.output_file.endswith(('.html', '.pdf')):
-            print("Error: Output file must have a .html or .pdf extension.", file=sys.stderr)
-            sys.exit(1)
-    
-    # If watcher mode (-w) is specified, ensure input file (-i) is also provided
-    if args.watcher and not args.input_file:
-        print("Error: -w/--watcher requires -i/--input-file.", file=sys.stderr)
-        sys.exit(1)
 
 # Parse the arguments and start the application in the desired mode: Interactive, Batch, or Watcher
 def main():

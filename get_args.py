@@ -1,9 +1,7 @@
 import argparse
 import sys
-import threading
-from app_gui import AppGUI
-from app_controller import AppController
 
+# Handle command line argument parsing
 
 def validate_arguments(args):
     # If output file (-o) is provided, ensure input file (-i) is also provided
