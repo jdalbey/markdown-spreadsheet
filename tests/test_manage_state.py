@@ -21,21 +21,22 @@ def test_unsaved_changes_tracking(main_window):
 
     assert main_window.windowTitle() == "Spreadsheet Viewer - test.txt"
 
-    # Simulate text changes
-    main_window.on_text_changed()
+    # Modify the editor state
+    main_window.text_editor.setPlainText("Unsaved content")
+
     assert main_window.unsaved_changes
     assert main_window.windowTitle() == "Spreadsheet Viewer - test.txt *"
+
 
 def test_confirm_unsaved_changes_yes(main_window, monkeypatch):
     """Test confirm_unsaved_changes when user clicks 'Yes'."""
     mock_msg_box = MagicMock(return_value=QMessageBox.Yes)
     monkeypatch.setattr(QMessageBox, "question", mock_msg_box)
 
-    # Simulate unsaved changes
-    main_window.unsaved_changes = True
-    result = main_window.confirm_unsaved_changes()
+    # Modify the editor state
+    main_window.text_editor.setPlainText("Unsaved content")
 
-    assert result is True
+    assert main_window.confirm_unsaved_changes() is True
     mock_msg_box.assert_called_once_with(
         main_window,
         "Unsaved Changes",
@@ -49,8 +50,8 @@ def test_confirm_unsaved_changes_no(main_window, monkeypatch):
     mock_msg_box = MagicMock(return_value=QMessageBox.No)
     monkeypatch.setattr(QMessageBox, "question", mock_msg_box)
 
-    # Simulate unsaved changes
-    main_window.unsaved_changes = True
+    # Modify the editor state
+    main_window.text_editor.setPlainText("Unsaved content")
     result = main_window.confirm_unsaved_changes()
 
     assert result is False
@@ -63,7 +64,6 @@ def test_new_file_with_unsaved_changes(main_window, monkeypatch):
 
     # Set up a test state
     main_window.text_editor.setPlainText("Unsaved content")
-    main_window.unsaved_changes = True
 
     # Call new_file
     main_window.new_file()
@@ -81,8 +81,8 @@ def test_close_event_with_unsaved_changes(main_window, monkeypatch):
     # Mock the close event
     mock_event = MagicMock()
 
-    # Simulate unsaved changes
-    main_window.unsaved_changes = True
+    # Set up a test state
+    main_window.text_editor.setPlainText("Unsaved content")
 
     # Call closeEvent
     main_window.closeEvent(mock_event)
