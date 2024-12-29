@@ -48,6 +48,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         #for row in range (num_rows):
             #self.grid.removeRow(row)
 
+
     def recalculate(self):
         self.update_grid(self.text_editor.toPlainText().splitlines())
 
@@ -78,7 +79,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
                     self.grid.setItem(row - 1, col - 1, item)  # 0-based
 
         except Exception as e:
-            print(f"Error in recalculate + {e}")
+            print(f"Error in update grid: {e}")
             QMessageBox.critical(self,"Error",f"Failed to update grid: {e}")
 
     def build_gui(self,is_watcher):
@@ -92,12 +93,15 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         new_action = QAction("&New", self)
         open_action = QAction("&Open", self)
         save_action = QAction("&Save", self)
+        quit_action = QAction("&Exit", self)
         new_action.setShortcut("Ctrl+N")
         open_action.setShortcut("Ctrl+O")
         save_action.setShortcut("Ctrl+S")
+        quit_action.setShortcut("Ctrl+Q")
         file_menu.addAction(new_action)
         file_menu.addAction(open_action)
         file_menu.addAction(save_action)
+        file_menu.addAction(quit_action)
 
         # Edit menu
         edit_menu = QMenu("Edit", menu_bar)
@@ -168,20 +172,26 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         new_action.triggered.connect(self.new_file)
         open_action.triggered.connect(self.show_open_file_dialog)
         save_action.triggered.connect(self.save_file)
+        quit_action.triggered.connect(self.quit)
 
         # Place everything in a layout
         main_layout = QHBoxLayout()
         if not is_watcher:
             # Create a splitter layout to hold both panels side by side
-            splitter = QSplitter(Qt.Horizontal)  # Horizontal splitter
-            splitter.addWidget(self.text_editor)  # Add the text editor to the splitter
-            splitter.addWidget(self.grid)  # Add the table to the splitter
-            splitter.setSizes([500,800])  # must issue after adding widgets
+            self.splitter = QSplitter(Qt.Horizontal)  # Horizontal splitter
+            self.splitter.addWidget(self.text_editor)  # Add the text editor to the splitter
+            self.splitter.addWidget(self.grid)  # Add the table to the splitter
+            #splitter.setSizes([500,900])  # must issue after adding widgets
+            # Set ratio of sizes of panels
+            self.splitter.setStretchFactor(0,2)  #index=0,stretch=2
+            self.splitter.setStretchFactor(1,3)
             # set the splitter in the layout
-            main_layout.addWidget(splitter)
+            main_layout.addWidget(self.splitter)
         else:
             # We only need the grid panel (don't use a splitter)
             main_layout.addWidget(self.grid)
+
+        self.resize(900, 400)  # Adjust window size
 
         # Create a central widget and set the layout
         central_widget = QWidget()  # Create a QWidget for the central widget
@@ -189,7 +199,6 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
 
         self.setCentralWidget(central_widget)  # Set the central widget of the main window
 
-        self.resize(900, 400)  # Adjust window size
 
         self.show()
 
@@ -304,6 +313,10 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
             event.accept()
         else:
             event.ignore()
+
+    def quit(self):
+        if self.confirm_unsaved_changes():
+            exit()
 
     # Function to watch the file for changes
     def watch_and_update(self, file_path):
