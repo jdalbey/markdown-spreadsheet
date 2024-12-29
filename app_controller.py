@@ -29,7 +29,7 @@ class AppController:
         except Exception as e:
             raise ValueError(f"Error reading file: {e}")
 
-    def verify_editor_content(self, source_lines:list):
+    def verify_editor_content(self, source_lines:list) -> bool:
         result = self.transformer.identify_file_format(self.FILE_EXTENSION,source_lines)
         return result != "Unknown: Format not recognized"
 

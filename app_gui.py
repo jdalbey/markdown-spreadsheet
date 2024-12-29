@@ -35,6 +35,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         super().__init__()  # Initialize the QMainWindow class
         self.controller = AppController()
         self.current_file_path = None
+        self.unsaved_changes = False  # Track unsaved changes
         self.build_gui(is_watcher)
 
     def clear_grid(self):
@@ -193,28 +194,60 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         self.show()
 
     def on_text_changed(self):
+        if not self.unsaved_changes:
+            self.unsaved_changes = True
+            self.update_window_title()
         self.recalculate()
 
     def verify_editor(self):
         content_lines = self.text_editor.toPlainText().splitlines()
         if self.controller.verify_editor_content(content_lines):
-            QMessageBox.information(self, "Verify Spreadsheet","Verified!")
+            QMessageBox.information(self, "Verify Spreadsheet","Verified! Editor content is indeed a spreadsheet.")
         else:
-            QMessageBox.information(self, "Verify Spreadsheet","Not Verified.  Editor content not a recognized spreadsheet format.")
-    # TODO Manage state and don't New without confirming
-    # TODO see this example https://tech-couch.com/post/building-a-text-editor-in-python-with-tkinter
+            QMessageBox.information(self, "Verify Spreadsheet","Not Verified.  Editor content is not a recognized spreadsheet format.")
+
+    # Manage state
+    # The current window title is to reflect the current state of the text editor with an asterisk if we have unsaved changes. I suggest implementation make use of PyQt on_text_changed function. This is a simple approach that isn't completely correct but is helpful for most use cases. we also want to ensure we are warned with a confirmation dialog if there are unsaved changes that would be lost if we create a new file or open a file or close the application.
+
+
+    def update_window_title(self):
+        """Update the window title to reflect the unsaved changes."""
+        filename = os.path.basename(self.current_file_path) if self.current_file_path else "Untitled"
+        title = f"{self.APP_TITLE} - {filename}"
+        if self.unsaved_changes:
+            title += " *"  # Add asterisk for unsaved changes
+        self.setWindowTitle(title)
+
+    def confirm_unsaved_changes(self):
+        """Show a confirmation dialog if there are unsaved changes."""
+        if self.unsaved_changes:
+            response = QMessageBox.question(
+                self,
+                "Unsaved Changes",
+                "You have unsaved changes. Do you want to discard them?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
+            )
+            return response == QMessageBox.Yes
+        return True
 
     def new_file(self):
+        if not self.confirm_unsaved_changes():
+            return
         self.clear_grid()
         self.text_editor.clear()
-        self.setWindowTitle(self.APP_TITLE)
+        self.current_file_path = None
+        self.unsaved_changes = False
+        self.update_window_title()
 
     def show_open_file_dialog(self):
+        """Handle opening a file, checking for unsaved changes."""
+        if not self.confirm_unsaved_changes():
+            return
         options = QFileDialog.Options()
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*);;Markdown Files (*.md);;Text Files (*.txt)", options=options)
-        self.open_file_in_editor(file_path)
-        # self.clear_grid()
-        # self.recalculate()
+        if file_path:
+            self.open_file_in_editor(file_path)
 
     def open_file_in_editor(self,file_path):
         if file_path:
@@ -224,6 +257,8 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
                 # Causes a recalculate of the grid
                 self.text_editor.setPlainText(file_content)
                 self.current_file_path = file_path  # Keep track of the opened file
+                self.unsaved_changes = False
+                # TODO: Use self.update_window_title()?
                 filename = os.path.basename(file_path)
                 # Append filename to the window title
                 new_title = f"{self.APP_TITLE} - {filename}"
@@ -232,19 +267,43 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
                 QMessageBox.critical(self,"Error", f"Failed to open file: {e}")
 
     def save_file(self):
-        """ Save the contents of the text editor to a file using a file dialog """
-        options = QFileDialog.Options()
-        filepath, _ = QFileDialog.getSaveFileName(self, "Save File", "", "All Files (*)", options=options)
+        """Save the file, checking if it's already saved or not."""
+        if not self.current_file_path:
+            self.show_save_file_dialog()
+        else:
+            self.write_file(self.current_file_path)
 
-        if filepath:
-            with open(filepath, 'w') as file:
-                file.write(self.text_editor.toPlainText())  # Save the contents of the text editor to the file
-        folder, self.FILE_NAME = os.path.split(filepath)
-        # Save the file extension
-        path, dotted_extension = os.path.splitext(filepath)
-        self.FILE_EXTENSION =  dotted_extension[1:]
-        # Set the window title with the filename
-        self.setWindowTitle(f"{self.APP_TITLE} - {self.FILE_NAME}")
+    def show_save_file_dialog(self):
+        """Show a save file dialog."""
+        options = QFileDialog.Options()
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save File", "", "All Files (*)", options=options)
+        if file_path:
+            self.write_file(file_path)
+
+    def write_file(self, file_path):
+        """Write content to the specified file."""
+        try:
+            with open(file_path, 'w') as file:
+                file.write(self.text_editor.toPlainText())
+                self.current_file_path = file_path
+                self.unsaved_changes = False
+                # TODO Use self.update_window_title()?
+                folder, self.FILE_NAME = os.path.split(file_path)
+                # Save the file extension
+                path, dotted_extension = os.path.splitext(file_path)
+                self.FILE_EXTENSION = dotted_extension[1:]
+                # Set the window title with the filename
+                self.setWindowTitle(f"{self.APP_TITLE} - {self.FILE_NAME}")
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to save file: {e}")
+
+    def closeEvent(self, event):
+        """Handle closing the application, checking for unsaved changes."""
+        if self.confirm_unsaved_changes():
+            event.accept()
+        else:
+            event.ignore()
 
     # Function to watch the file for changes
     def watch_and_update(self, file_path):
