@@ -1,5 +1,5 @@
 import threading
-from qtgui import QtGUI
+from app_gui import AppGUI
 from app_controller import AppController
 from get_args import get_args
 
@@ -22,7 +22,7 @@ def main():
 
     elif args.watcher:
         print(f"Watcher mode: Monitoring '{args.input_file}'.")
-        gui = QtGUI(is_watcher=True)
+        gui = AppGUI(is_watcher=True)
         # Create a new thread for the watch_and_update method
         watcher_thread = threading.Thread(target=gui.start_with_watcher, args=(args.input_file,))
         watcher_thread.daemon = True  # Ensure the thread exits when the main program exits
@@ -31,12 +31,12 @@ def main():
 
     elif args.input_file:
         print("Running in interactive mode with input file ",args.input_file)
-        gui = QtGUI(is_watcher=False)
+        gui = AppGUI(is_watcher=False)
         gui.start_with_file(args.input_file)
         gui.run()
     else:
         print("Running in interactive mode.")
-        gui = QtGUI(is_watcher=False)
+        gui = AppGUI(is_watcher=False)
         gui.run()
 
 # Entry point for the application

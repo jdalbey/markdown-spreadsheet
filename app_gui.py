@@ -9,6 +9,27 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QKeySequence
 from app_controller import AppController
 
+class AppGUI:
+
+    def __init__(self,is_watcher):
+
+        # Create the application
+        self.qtapp = QApplication([])
+
+        # Create the main window
+        self.window = MainWindow(is_watcher)
+
+    def run(self):
+        # Run the application event loop
+        self.qtapp.exec_()
+
+    def start_with_file(self,file_path):
+        # Start the application with a given file
+        self.window.open_file_in_editor(file_path)
+
+    def start_with_watcher(self, file_path):
+        self.window.watch_and_update(file_path)
+
 class MainWindow(QMainWindow):  # Subclass QMainWindow
     APP_TITLE = "Spreadsheet Viewer"
     def __init__(self,is_watcher):
@@ -69,8 +90,8 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         # File menu
         file_menu = QMenu("File", menu_bar)
         new_action = QAction("&New", self)
-        open_action = QAction("Open", self)
-        save_action = QAction("Save", self)
+        open_action = QAction("&Open", self)
+        save_action = QAction("&Save", self)
         file_menu.addAction(new_action)
         file_menu.addAction(open_action)
         file_menu.addAction(save_action)
@@ -253,24 +274,3 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
                 # Refresh the grid
                 file_content = self.controller.read_file_content(file_path)
                 self.update_grid(file_content.splitlines())
-
-class QtGUI:
-
-    def __init__(self,is_watcher):
-
-        # Create the application
-        self.qtapp = QApplication([])
-
-        # Create the main window
-        self.window = MainWindow(is_watcher)
-
-    def run(self):
-        # Run the application event loop
-        self.qtapp.exec_()
-
-    def start_with_file(self,file_path):
-        # Start the application with a given file
-        self.window.open_file_in_editor(file_path)
-
-    def start_with_watcher(self, file_path):
-        self.window.watch_and_update(file_path)
