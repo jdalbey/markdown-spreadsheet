@@ -2,11 +2,10 @@ import os
 import string
 import time
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QTextEdit, QVBoxLayout, QSplitter, \
-    QTableWidget, QTableWidgetItem, QWidget, QFileDialog, QAbstractItemView, QMessageBox, QShortcut, QLabel, QFrame, \
-    QHBoxLayout
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QKeySequence
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMenu, QAction, QTextEdit, QSplitter, \
+    QTableWidget, QTableWidgetItem, QWidget, QFileDialog, QAbstractItemView, QMessageBox, QShortcut, QHBoxLayout
 from app_controller import AppController
 
 class AppGUI:
@@ -78,7 +77,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
                     self.grid.setItem(row - 1, col - 1, item)  # 0-based
 
         except Exception as e:
-            print("Error in recalculate" + e)
+            print(f"Error in recalculate + {e}")
             QMessageBox.critical(self,"Error",f"Failed to update grid: {e}")
 
     def build_gui(self,is_watcher):
@@ -92,6 +91,9 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         new_action = QAction("&New", self)
         open_action = QAction("&Open", self)
         save_action = QAction("&Save", self)
+        new_action.setShortcut("Ctrl+N")
+        open_action.setShortcut("Ctrl+O")
+        save_action.setShortcut("Ctrl+S")
         file_menu.addAction(new_action)
         file_menu.addAction(open_action)
         file_menu.addAction(save_action)
@@ -103,6 +105,12 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         copy_action = QAction("Copy", self)
         paste_action = QAction("Paste", self)
         verify_action = QAction("&Verify", self)
+        # Display the key combination for shortcuts for each menu item
+        cut_action.setShortcut("Ctrl+X")
+        undo_action.setShortcut("Ctrl+Z")
+        copy_action.setShortcut("Ctrl+C")
+        paste_action.setShortcut("Ctrl+V")
+        verify_action.setShortcut("Ctrl+Y")
 
         # Add actions to the Edit menu
         edit_menu.addAction(undo_action)
@@ -159,18 +167,6 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         new_action.triggered.connect(self.new_file)
         open_action.triggered.connect(self.show_open_file_dialog)
         save_action.triggered.connect(self.save_file)
-        # Connect Recalculate action
-        #recalc_action.triggered.connect(self.recalculate)
-
-        # Setup shortcut keys
-        # self.shortcut_recalc = QShortcut(QKeySequence('Ctrl+R'), self)
-        # self.shortcut_recalc.activated.connect(self.recalculate)
-        self.shortcut_new_file = QShortcut(QKeySequence('Ctrl+N'), self)
-        self.shortcut_open_file = QShortcut(QKeySequence('Ctrl+O'), self)
-        self.shortcut_save_file = QShortcut(QKeySequence('Ctrl+S'), self)
-        self.shortcut_new_file.activated.connect(self.new_file)
-        self.shortcut_open_file.activated.connect(self.show_open_file_dialog)
-        self.shortcut_save_file.activated.connect(self.save_file)
 
         # Place everything in a layout
         main_layout = QHBoxLayout()
@@ -179,6 +175,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
             splitter = QSplitter(Qt.Horizontal)  # Horizontal splitter
             splitter.addWidget(self.text_editor)  # Add the text editor to the splitter
             splitter.addWidget(self.grid)  # Add the table to the splitter
+            splitter.setSizes([500,800])  # must issue after adding widgets
             # set the splitter in the layout
             main_layout.addWidget(splitter)
         else:
@@ -191,7 +188,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
 
         self.setCentralWidget(central_widget)  # Set the central widget of the main window
 
-        self.resize(800, 400)  # Adjust window size
+        self.resize(900, 400)  # Adjust window size
 
         self.show()
 
