@@ -11,10 +11,10 @@ View a plain-text spreadsheet in a graphical view.
  - Has a "batch" mode (non-interactive) that transforms an input file to HTML output file.
 
 ## Status
-Under development.  All features above are implemented but with very little error-checking.
+Under development.  All features above are implemented but with very little error-checking.  There are sparse comments and only basic unit tests.
 
 ## Screenshot
-[![viewer-screenshot.png](https://i.postimg.cc/kXKbL9Bt/viewer-screenshot.png)](https://postimg.cc/D8f0b9Q2)
+[![Screenshot-from-2024-12-28-21-01-00.png](https://i.postimg.cc/Hxddy7dM/Screenshot-from-2024-12-28-21-01-00.png)](https://postimg.cc/CZP3y5ZM)
 
 ## Acknowledgments
 This project wouldn't be possible without [Ironcalc](https://www.ironcalc.com/), an open-source spreadsheet engine.
