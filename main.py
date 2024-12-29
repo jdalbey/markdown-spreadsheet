@@ -1,6 +1,5 @@
-import sys
 import threading
-from app_gui import AppGUI
+from qtgui import QtGUI
 from app_controller import AppController
 from get_args import get_args
 
@@ -17,28 +16,27 @@ def main():
         # Read input file
         content = controller.read_file_content(args.input_file)
         # send to recalculate
-        worksheet = controller.evaluate(content)
+        worksheet = controller.evaluate(content.splitlines())
         # get results from model and write to HTML file using a table for the grid.
         controller.writer.write(worksheet,args.output_file,"HTML")
 
     elif args.watcher:
         print(f"Watcher mode: Monitoring '{args.input_file}'.")
-        gui = AppGUI(is_watcher=True)
+        gui = QtGUI(is_watcher=True)
         # Create a new thread for the watch_and_update method
-        watcher_thread = threading.Thread(target=gui.watch_and_update, args=(args.input_file,))
+        watcher_thread = threading.Thread(target=gui.start_with_watcher, args=(args.input_file,))
         watcher_thread.daemon = True  # Ensure the thread exits when the main program exits
         watcher_thread.start()
         gui.run()
 
     elif args.input_file:
         print("Running in interactive mode with input file ",args.input_file)
-        gui = AppGUI(is_watcher=False)
-        gui.open_file_in_editor(args.input_file)
-        gui.recalculate()
+        gui = QtGUI(is_watcher=False)
+        gui.start_with_file(args.input_file)
         gui.run()
     else:
         print("Running in interactive mode.")
-        gui = AppGUI(is_watcher=False)
+        gui = QtGUI(is_watcher=False)
         gui.run()
 
 # Entry point for the application
