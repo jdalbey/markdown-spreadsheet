@@ -14,7 +14,7 @@ class AppController:
         self.transformer = DataTransformer()
         self.writer = FileWriter()
     
-    def read_file_content(self, file_path: str) -> list:
+    def read_file_content(self, file_path: str) -> str:
         """Read the given file and return content as a list of strings"""
         # Save the file name and extension
         #path = os.path.normpath(file_path)  # normalize different OSes
@@ -28,14 +28,21 @@ class AppController:
             return data  # Assuming `read_file` returns the raw content directly
         except Exception as e:
             raise ValueError(f"Error reading file: {e}")
-        
+
+    def verify_editor_content(self, source_lines:list):
+        result = self.transformer.identify_file_format(self.FILE_EXTENSION,source_lines)
+        return result != "Unknown: Format not recognized"
+
     def evaluate(self, source_lines: list):
         """Parse the source lines into the ironcalc model and evaluate it."""
-        self.transformer.parse_source(self.FILE_EXTENSION, source_lines)
+        result = self.transformer.parse_source(self.FILE_EXTENSION, source_lines)
 
         # When parsing is complete, evaluate the spreadsheet (recalculate all cells)
-        worksheet = self.transformer.get_worksheet()
-        spreadsheet = worksheet['sheet']
-        spreadsheet.evaluate()
-        
+        if result:
+            worksheet = self.transformer.get_worksheet()
+            spreadsheet = worksheet['sheet']
+            spreadsheet.evaluate()
+        else:
+            worksheet = {"sheet":None, "rows":0, "columns":0}
+
         return worksheet
