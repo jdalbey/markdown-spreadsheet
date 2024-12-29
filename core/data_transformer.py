@@ -1,85 +1,6 @@
 import ironcalc as ic
 import re, csv
 
-def identify_file_format(file_extension, source_lines):
-    """ Identify the file format from file content clues
-    @param file_extension: A string with the 3-character file extension
-    @param source_lines: the plain text content of the file
-    @return: A tuple: flag, line_num where flag is true if the file content is recognized and False if not
-             if False, line_num has the offending line number.
-    """
-    def is_csv(lines):
-        for i, line in enumerate(lines):
-            if len(line) == 0:
-                continue
-            if ',' not in line and ';' not in line and '\t' not in line:
-                return False, i + 1
-        return True, None
-
-    def is_sylk(lines):
-        if not lines[0].startswith('ID'):
-            return False, 1
-        return True, None
-
-    def is_markdown_table(lines):
-        stripped_lines = [line.strip() for line in lines if line.strip()]
-        if len(stripped_lines) < 2:
-            return False, 1
-        if '|' not in stripped_lines[0]:
-            return False, 1
-        if not all(c in '-:| ' for c in stripped_lines[1]):
-            return False, 2
-        return True, None
-
-    def is_dif(lines):
-        if not (lines[0].strip().upper() == 'TABLE' or lines[0].strip().upper() == 'HEADER'):
-            return False, 1
-        return True, None
-
-    def is_ser(lines):
-        position_pattern = r'^[A-Z]+[1-9][0-9]*$'  # Regex for valid position (e.g., A1, B3, DD25)
-        for i, line in enumerate(lines):
-            # ignore blank lines
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            parts = line.split(':', 1)
-            if len(parts) != 2 or not re.match(position_pattern, parts[0]):
-                return False, i + 1
-        return True, None
-
-    try:
-
-        # Mapping of file extensions to check functions
-        format_checkers = {
-            '.csv': ('CSV', is_csv),
-            '.slk': ('SYLK', is_sylk),
-            '.md': ('Markdown', is_markdown_table),
-            '.dif': ('DIF', is_dif),
-            '.ser': ('SER', is_ser)
-        }
-
-        # Prioritize based on file extension
-        file_extension = file_extension.lower()  # make lower case
-        if file_extension in format_checkers:
-            format_name, checker = format_checkers[file_extension]
-            is_valid, line_num = checker(source_lines)
-            if is_valid:
-                return f"Detected format: {format_name}"
-            else:
-                print(f"identify_file_format(): {format_name} check failed at line {line_num}")
-
-        # Fall back to checking all formats
-        for format_name, checker in format_checkers.values():
-            is_valid, line_num = checker(source_lines)
-            if is_valid:
-                return f"Detected format: {format_name}"
-
-        return "Unknown: Format not recognized"
-
-    except Exception as e:
-        return f"Error reading file: {e}"
-
 def spreadsheet_to_html(worksheet):
     """ Convert a spreadsheet into an HTML table.
      @param dictionary containing the spreadsheet
@@ -115,6 +36,86 @@ class DataTransformer:
 
     def get_model(self):
         return self.spreadsheet
+
+    def identify_file_format(self, file_extension, source_lines):
+        """ Identify the file format from file content clues
+        @param file_extension: A string with the 3-character file extension
+        @param source_lines: the plain text content of the file
+        @return: A tuple: flag, line_num where flag is true if the file content is recognized and False if not
+                 if False, line_num has the offending line number.
+        """
+
+        def is_csv(lines):
+            for i, line in enumerate(lines):
+                if len(line) == 0:
+                    continue
+                if ',' not in line and ';' not in line and '\t' not in line:
+                    return False, i + 1
+            return True, None
+
+        def is_sylk(lines):
+            if not lines[0].startswith('ID'):
+                return False, 1
+            return True, None
+
+        def is_markdown_table(lines):
+            stripped_lines = [line.strip() for line in lines if line.strip()]
+            if len(stripped_lines) < 2:
+                return False, 1
+            if '|' not in stripped_lines[0]:
+                return False, 1
+            if not all(c in '-:| ' for c in stripped_lines[1]):
+                return False, 2
+            return True, None
+
+        def is_dif(lines):
+            if not (lines[0].strip().upper() == 'TABLE' or lines[0].strip().upper() == 'HEADER'):
+                return False, 1
+            return True, None
+
+        def is_ser(lines):
+            position_pattern = r'^[A-Z]+[1-9][0-9]*$'  # Regex for valid position (e.g., A1, B3, DD25)
+            for i, line in enumerate(lines):
+                # ignore blank lines
+                line = line.strip()
+                if len(line) == 0:
+                    continue
+                parts = line.split(':', 1)
+                if len(parts) != 2 or not re.match(position_pattern, parts[0]):
+                    return False, i + 1
+            return True, None
+
+        try:
+
+            # Mapping of file extensions to check functions
+            format_checkers = {
+                '.csv': ('CSV', is_csv),
+                '.slk': ('SYLK', is_sylk),
+                '.md': ('Markdown', is_markdown_table),
+                '.dif': ('DIF', is_dif),
+                '.ser': ('SER', is_ser)
+            }
+
+            # Prioritize based on file extension
+            file_extension = file_extension.lower()  # make lower case
+            if file_extension in format_checkers:
+                format_name, checker = format_checkers[file_extension]
+                is_valid, line_num = checker(source_lines)
+                if is_valid:
+                    return f"Detected format: {format_name}"
+                else:
+                    print(f"identify_file_format(): {format_name} check failed at line {line_num}")
+
+            # Fall back to checking all formats
+            for format_name, checker in format_checkers.values():
+                is_valid, line_num = checker(source_lines)
+                if is_valid:
+                    return f"Detected format: {format_name}"
+
+            return "Unknown: Format not recognized"
+
+        except Exception as e:
+            return f"Error reading file: {e}"
 
     def update_max_dimensions(self, row_idx, col_idx):
         """Update the maximum row and column numbers encountered."""
@@ -225,15 +226,19 @@ class DataTransformer:
                     self.spreadsheet.set_user_input(0, current_row, current_col, value)
                     self.update_max_dimensions(current_row, current_col)
 
-    def parse_source(self, file_extension, source_lines):
+    def parse_source(self, file_extension, source_lines: list) -> bool:
+        """ Parse the source lines into the spreadsheet model
+        @param source_lines list of lines to be put in the spreadsheet
+        @return True if parsing was successful, False otherwise"""
+
         # Try to identify_file_format
-        format_result = identify_file_format(file_extension, source_lines)
+        format_result = self.identify_file_format(file_extension, source_lines)
 
         if format_result.startswith("Detected format:"):
             detected_format = format_result.split(":")[1].strip()
         else:
-            print("Unsupported format or failed validation. Exiting.")
-            return None
+            #print("Unsupported format or failed validation. Exiting.")
+            return False
 
         # reset table
         self.row_max = 0
@@ -258,8 +263,9 @@ class DataTransformer:
 
         except Exception as e:
             print(f"Unable to parse editor lines: {e}")
+            return False
 
-
+        return True
 
     # def parse_serialized_sheet(self, serialized_sheet: str):
     #     """ Logic to parse the serialized sheet """
