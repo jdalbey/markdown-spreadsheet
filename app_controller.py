@@ -17,8 +17,6 @@ class AppController:
     def read_file_content(self, file_path: str) -> str:
         """Read the given file and return content as a list of strings"""
         # Save the file name and extension
-        #path = os.path.normpath(file_path)  # normalize different OSes
-        #file, ext = path.split(os.sep)
         folder, self.FILE_NAME = os.path.split(file_path)
         path, dotted_extension = os.path.splitext(file_path)
         self.FILE_EXTENSION =  dotted_extension[1:]
@@ -30,7 +28,7 @@ class AppController:
             raise ValueError(f"Error reading file: {e}")
 
     def verify_editor_content(self, source_lines:list) -> bool:
-        result = self.transformer.identify_file_format(self.FILE_EXTENSION,source_lines)
+        result = DataTransformer.identify_file_format(self.FILE_EXTENSION,source_lines)
         return result != "Unknown: Format not recognized"
 
     def evaluate(self, source_lines: list):
