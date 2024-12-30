@@ -37,7 +37,8 @@ class DataTransformer:
     def get_model(self):
         return self.spreadsheet
 
-    def identify_file_format(self, file_extension, source_lines):
+    @staticmethod
+    def identify_file_format(file_extension, source_lines):
         """ Identify the file format from file content clues
         @param file_extension: A string with the 3-character file extension
         @param source_lines: the plain text content of the file
