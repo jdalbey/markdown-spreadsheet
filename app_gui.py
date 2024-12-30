@@ -41,13 +41,6 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
     def clear_grid(self):
         self.grid.setRowCount(0)
         self.grid.setColumnCount(1)
-        # the following doesn't work
-        #self.grid.clearContents()
-        #num_rows = self.grid.rowCount()
-        #num_cols = self.grid.columnCount()
-        #for row in range (num_rows):
-            #self.grid.removeRow(row)
-
 
     def recalculate(self):
         self.update_grid(self.text_editor.toPlainText().splitlines())
@@ -199,7 +192,6 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
 
         self.setCentralWidget(central_widget)  # Set the central widget of the main window
 
-
         self.show()
 
     def on_text_changed(self):
@@ -216,9 +208,12 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
             QMessageBox.information(self, "Verify Spreadsheet","Not Verified.  Editor content is not a recognized spreadsheet format.")
 
     # Manage state
-    # The current window title is to reflect the current state of the text editor with an asterisk if we have unsaved changes. I suggest implementation make use of PyQt on_text_changed function. This is a simple approach that isn't completely correct but is helpful for most use cases. we also want to ensure we are warned with a confirmation dialog if there are unsaved changes that would be lost if we create a new file or open a file or close the application.
-
-
+    # The current window title is to reflect the current state of the text editor with an asterisk
+    # if we have unsaved changes. We also want to ensure we are warned with a confirmation dialog
+    # if there are unsaved changes that would be lost if we
+    #   1. create a new file
+    #   2. open a file
+    #   3. close the application.
     def update_window_title(self):
         """Update the window title to reflect the unsaved changes."""
         filename = os.path.basename(self.current_file_path) if self.current_file_path else "Untitled"
@@ -263,7 +258,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
             try:
                 file_content = self.controller.read_file_content(file_path)
                 # Set the contents of the file to the text editor
-                # Causes a recalculate of the grid
+                # Causes grid recalculate
                 self.text_editor.setPlainText(file_content)
                 self.current_file_path = file_path  # Keep track of the opened file
                 self.unsaved_changes = False
