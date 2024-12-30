@@ -202,10 +202,11 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
 
     def verify_editor(self):
         content_lines = self.text_editor.toPlainText().splitlines()
-        if self.controller.verify_editor_content(content_lines):
-            QMessageBox.information(self, "Verify Spreadsheet","Verified! Editor content is indeed a spreadsheet.")
-        else:
+        filetype = self.controller.verify_editor_content(content_lines)
+        if filetype == "":
             QMessageBox.information(self, "Verify Spreadsheet","Not Verified.  Editor content is not a recognized spreadsheet format.")
+        else:
+            QMessageBox.information(self, "Verify Spreadsheet",f"Verified! Editor content identified as {filetype}.")
 
     # Manage state
     # The current window title is to reflect the current state of the text editor with an asterisk

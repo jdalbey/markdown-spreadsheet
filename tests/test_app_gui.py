@@ -50,7 +50,7 @@ def test_verify_editor(main_window, monkeypatch):
     monkeypatch.setattr(QMessageBox, 'information', mock_msg_box)
 
     # Test the "Verified" case
-    valid_content = "A1: 5\nB1: 10"
+    valid_content = "5,10\n7,12"   # create a CSV spreadsheet
     main_window.text_editor.setPlainText(valid_content)
 
     # Call verify_editor
@@ -58,7 +58,7 @@ def test_verify_editor(main_window, monkeypatch):
 
     # Verify that QMessageBox displayed the "Verified!" message
     mock_msg_box.assert_called_once_with(
-        main_window, "Verify Spreadsheet", "Verified! Editor content is indeed a spreadsheet."
+        main_window, "Verify Spreadsheet", "Verified! Editor content identified as CSV."
     )
 
     # Test the "Not Verified" case

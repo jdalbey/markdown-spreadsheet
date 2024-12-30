@@ -27,9 +27,13 @@ class AppController:
         except Exception as e:
             raise ValueError(f"Error reading file: {e}")
 
-    def verify_editor_content(self, source_lines:list) -> bool:
+    def verify_editor_content(self, source_lines:list) -> str:
         result = DataTransformer.identify_file_format(self.FILE_EXTENSION,source_lines)
-        return result != "Unknown: Format not recognized"
+        if result == "Unknown: Format not recognized":
+            return ""
+        else:
+            # extract the file type from the result message
+            return result.split(":")[1].strip()
 
     def evaluate(self, source_lines: list):
         """Parse the source lines into the ironcalc model and evaluate it."""
