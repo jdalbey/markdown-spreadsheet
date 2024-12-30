@@ -11,7 +11,7 @@ View a plain-text spreadsheet in a graphical view.
  - Has a "batch" mode (non-interactive) that transforms an input file to HTML output file.
 
 ## Status
-Under development.  All features above are implemented but with very little error-checking.  There are sparse comments and only basic unit tests.
+Under development.  All features above are implemented but with only basic error-checking.  There are sparse comments and only basic unit tests.
 
 ## Usage
 
@@ -37,22 +37,23 @@ Examples of several different file formats that are understood by the applicatio
 
 ### Command Line Parameters
 
-The application can be started in several different modes.  
+The application can be started in several different modes:  
 
-`usage: main.py [-h] [-i INPUT_FILE] [-o OUTPUT_FILE] [-w]`
+```
+usage: main.py [-h] [-i INPUT_FILE] [-o OUTPUT_FILE] [-w]
 
-`A versatile file processing application.`
+A plain-text file spreadsheet viewer and editor.
 
-`options:`
-  `-h, --help            show this help message and exit`
-  `-i INPUT_FILE, --input_file INPUT_FILE`
-                        `(Optional) The file to be opened by the application.`
-                        `If not specified, a new file is opened.`
-  `-o OUTPUT_FILE, --output-file OUTPUT_FILE`
-                        `(Optional) The output file to be generated. Runs in`
-                        `batch mode when specified.`
-  `-w, --watcher         (Optional) Start in watcher mode to monitor the`
-                        `specified input file.`
+options:
+  -h, --help            show this help message and exit
+  -i INPUT_FILE, --input_file INPUT_FILE
+                        (Optional) The file to be opened by the application. 
+                        If not specified, a blank spreadsheet is opened.
+  -o OUTPUT_FILE, --output-file OUTPUT_FILE
+                        (Optional) The output file to be generated. 
+                        Runs in batch mode when specified.
+  -w, --watcher         (Optional) Start in watcher mode to monitor the specified input file.
 
+```
 ## Acknowledgments
 This project wouldn't be possible without [Ironcalc](https://www.ironcalc.com/), an open-source spreadsheet engine.

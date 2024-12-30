@@ -23,10 +23,10 @@ def validate_arguments(args):
 def get_args():
     """ Get the command line arguments """
     # Create an ArgumentParser object
-    parser = argparse.ArgumentParser(description="A versatile file processing application.")
+    parser = argparse.ArgumentParser(description="A plain-text file spreadsheet viewer and editor.")
     
     # Define arguments
-    parser.add_argument('-i', '--input_file', type=str, help="(Optional) The file to be opened by the application. If not specified, a new file is opened.")
+    parser.add_argument('-i', '--input_file', type=str, help="(Optional) The file to be opened by the application. If not specified, a blank spreadsheet is opened.")
     parser.add_argument('-o', '--output-file', type=str, help="(Optional) The output file to be generated. Runs in batch mode when specified.")
     parser.add_argument('-w', '--watcher', action='store_true', help="(Optional) Start in watcher mode to monitor the specified input file.")
 
