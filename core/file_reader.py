@@ -1,6 +1,6 @@
 
 class FileReader:
-    def read_file(self, file_path: str) -> list:
+    def read_file(self, file_path: str) -> str:
         # Logic to read the file
         if file_path:
             try:
