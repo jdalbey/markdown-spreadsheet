@@ -35,6 +35,8 @@ Standard editing functions are available from the Edit menu (and as shortcut key
 
 Examples of several different file formats that are understood by the application are available in the `sheets` folder of the repository.
 
+A [video demonstration of the spreadsheet features](https://youtu.be/vGklyrRApdM) is available.
+
 ### Command Line Parameters
 
 The application can be started in several different modes:  
