@@ -133,8 +133,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
                                     "{"
                                     "background : ivory;"
                                     "}")
-            self.text_editor.setPlaceholderText("Enter your text here...")
-            self.text_editor.textChanged.connect(self.on_text_changed)
+            #self.text_editor.setPlaceholderText("Enter your text here...")
 
             # Connect the actions to their respective methods in QTextEdit
             undo_action.triggered.connect(self.text_editor.undo)
@@ -144,6 +143,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
             verify_action.triggered.connect(self.verify_editor)
             self.shortcut_verify_editor = QShortcut(QKeySequence('Ctrl+Y'), self)
             self.shortcut_verify_editor.activated.connect(self.verify_editor)
+            self.text_editor.textChanged.connect(self.on_text_changed)
 
         # Panel 2: Grid (like an HTML table)
         self.grid = QTableWidget(1,1)  # row, col dimensions
@@ -185,7 +185,6 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
             main_layout.addWidget(self.grid)
 
         self.resize(900, 400)  # Adjust window size
-
         # Create a central widget and set the layout
         central_widget = QWidget()  # Create a QWidget for the central widget
         central_widget.setLayout(main_layout)  # Set the layout for the central widget
@@ -195,7 +194,9 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
         self.show()
 
     def on_text_changed(self):
+        """Recalculate the spreadsheet when the text changes"""
         if not self.unsaved_changes:
+            # Indicate we now have unsaved changes
             self.unsaved_changes = True
             self.update_window_title()
         self.recalculate()
