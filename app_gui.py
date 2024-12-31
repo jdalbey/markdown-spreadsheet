@@ -1,5 +1,6 @@
 import os
 import string
+import sys
 import time
 
 from PyQt5.QtCore import Qt
@@ -123,7 +124,6 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
 
         # Panel 1: Text Editor (Used when we aren't in watcher mode)
         if not is_watcher:
-            print ("Create the Editor widget")
             self.text_editor = QTextEdit(self)
             # Set monospaced font for the editor
             editor_font = QFont("DejaVu Sans Mono", 12)
@@ -313,7 +313,7 @@ class MainWindow(QMainWindow):  # Subclass QMainWindow
 
     def quit(self):
         if self.confirm_unsaved_changes():
-            exit()
+            sys.exit()
 
     # Function to watch the file for changes
     def watch_and_update(self, file_path):
