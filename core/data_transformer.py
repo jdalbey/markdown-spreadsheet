@@ -167,13 +167,10 @@ class DataTransformer:
     def process_markdown(self,lines):
         """Process Markdown format."""
         stripped_lines = [line.strip() for line in lines if line.strip()]
-        header_line = stripped_lines[0]
-        separator_line = stripped_lines[1]
-        data_lines = stripped_lines[2:]
+        stripped_lines.pop(1)  # delete the separator line
 
-        # TODO Figure out how to handle the markdown table headers
-        #headers = [h.strip() for h in header_line.split('|') if h.strip()]
-        for row_idx, row in enumerate(data_lines, start=1):
+        # Copy the cell values into the grid
+        for row_idx, row in enumerate(stripped_lines, start=1):
             values = [v.strip() for v in row.strip('|').split('|')]
             for col_idx, value in enumerate(values, start=1):
                 self.spreadsheet.set_user_input(0, row_idx, col_idx, value.strip())
