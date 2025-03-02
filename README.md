@@ -1,5 +1,6 @@
-# Spreadsheet Viewer
-View a plain-text spreadsheet in a graphical view. 
+# Markdown Spreadsheet
+View a plain-text spreadsheet in a graphical view.
+Supports an extension to Markdown tables to treat them like spreadsheets.
 
 ## Features
  - Can import a spreadsheet in plain-text format
@@ -11,7 +12,7 @@ View a plain-text spreadsheet in a graphical view.
  - Has a "batch" mode (non-interactive) that transforms an input file to HTML output file.
 
 ## Status
-Under development.  All features above are implemented but with only basic error-checking.  There are sparse comments and only basic unit tests.
+Alpha release available for Linux. All features above are implemented but with only basic error-checking.
 
 ## Usage
 
